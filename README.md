@@ -48,4 +48,11 @@ Handler: 饱和策略
          CallerRunsPolicy：用调用者的线程执行任务。
          DiscardOldestPolicy：抛弃队列中最久的任务
          DiscardPolicy：抛弃当前任务
+
+
+执行逻辑：
+        1）当有任务提交的时候，会创建核心线程去执行任务（即使有核心线程空闲仍会创建）；
+        2）当核心线程数达到corePoolSize时，后续提交的都会进BlockingQueue中排队；
+        3）当BlockingQueue满了(offer失败)，就会创建临时线程(临时线程空闲超过一定时间后，会被销毁)；
+        5）当线程总数达到maximumPoolSize时，后续提交的任务都会被RejectedExecutionHandler拒绝
 </pre>
