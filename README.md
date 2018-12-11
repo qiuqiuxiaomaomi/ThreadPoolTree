@@ -56,3 +56,37 @@ Handler: 饱和策略
         3）当BlockingQueue满了(offer失败)，就会创建临时线程(临时线程空闲超过一定时间后，会被销毁)；
         5）当线程总数达到maximumPoolSize时，后续提交的任务都会被RejectedExecutionHandler拒绝
 </pre>
+
+ThreadPoolExcutor继承关系
+
+![](https://i.imgur.com/PvwDh7S.png)
+
+![](https://i.imgur.com/rghunww.png)
+
+ThreadPoolExcutor代码逻辑
+
+![](https://i.imgur.com/9jrHA7X.png)
+
+![](https://i.imgur.com/mw0M60E.png)
+
+![](https://i.imgur.com/TAl8CiC.png)
+
+![](https://i.imgur.com/LX8SiTh.png)
+
+![](https://i.imgur.com/pbqaQj4.png)
+
+<pre>
+执行步骤：
+
+      1）调用execute方法，传入Runable对象
+      2）判断传入的对象是否为null，为null则抛出异常，不为null继续流程
+      3）获取当前线程池的状态和线程个数变量
+      5）判断当前线程数是否小于核心线程数，是走流程5，否则走流程6
+      6）添加线程数，添加成功则结束，失败则重新获取当前线程池的状态和线程个数变量,
+      7）判断线程池是否处于RUNNING状态，是则添加任务到阻塞队列，否则走流程10，添加任务成功则继续流程8
+      8）重新获取当前线程池的状态和线程个数变量
+      9）重新检查线程池状态，不是运行状态则移除之前添加的任务，有一个false走流程9，都为true则走流程12
+      10）检查线程池线程数量是否为0，否则结束流程，是调用addWorker(null, false)，然后结束
+      11）调用!addWorker(command, false)，为true走流程11，false则结束
+      12）调用拒绝策略reject(command)，结束
+</pre>
